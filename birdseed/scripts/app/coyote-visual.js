@@ -54,28 +54,6 @@ CVC.nextPCDataNum = 0;
 
 CVC.runDifferenceAlgorithm = function(combinedTabData) {
 	
-	/*
-	// experimenting with javascript
-	var i;
-	var j;
-	var maxi = 10;
-	var maxj = 9;
-    for (i=0,j=0; (i<maxi&&j<maxj); i++,j++) {
-    	console.log(i + ":" + j);
-    }
-    
-    if (true) {
-    	console.log('a');
-    	console.log('b');
-    	console.log('c');
-    	break;
-    	console.log('d');
-    	console.log('e');
-    }
-    exit;
-    */
-
-
 	var result = new $.Deferred();
 
 	var heading = $("#heading");
@@ -127,10 +105,10 @@ CVC.runDifferenceAlgorithm = function(combinedTabData) {
     CVC.wrapper.normalize();
     CVC.compress('', CVC.wrapper, 0);
 	
-    console.log('references to root nodes');
-	console.dir(CVC.wrapper);
-	console.dir(CVC.samples[0]);
-	console.dir(CVC.samples[1]);
+    //console.log('references to root nodes');
+	//console.dir(CVC.wrapper);
+	//console.dir(CVC.samples[0]);
+	//console.dir(CVC.samples[1]);
 
 	// pre-process the DOM tree of the wrapper and each sample
    	pageRootNodeId = CVC.preprocess(CVC.wrapperNodeStore, CVC.wrapper, 0, 0);
@@ -141,22 +119,22 @@ CVC.runDifferenceAlgorithm = function(combinedTabData) {
     //CVC.showTree(CVC.wrapper);
     //CVC.showTree(CVC.samples[1]);
     
-    console.log('node stores');
-	console.dir(CVC.wrapperNodeStore);
-	console.dir(CVC.sampleNodeStore);
+    //console.log('node stores');
+	//console.dir(CVC.wrapperNodeStore);
+	//console.dir(CVC.sampleNodeStore);
 
-	console.log('generalizing sample 1');
+	//console.log('generalizing sample 1');
 	var generalizeResult = CVC.match(
 			CVC.wrapper,
 			CVC.samples[1],
 			true);
-	console.log('generalizing sample 0');
+	//console.log('generalizing sample 0');
 	var generalizeResult = CVC.match(
 			CVC.wrapperNodeStore[CVC.wrapper.c_cid],
 			CVC.sampleNodeStore[CVC.samples[0].c_cid],
 			true);
 
-    CVC.showTree(CVC.wrapper);
+    //CVC.showTree(CVC.wrapper);
     
 	result.resolve();
 	return result.promise();
@@ -376,12 +354,12 @@ CVC.showTree = function(node) {
  */
 CVC.match = function(W, S, GEN) {
 	
-	console.log('---------------------');
-	console.log(W.c_depth + ":" + GEN);
-	console.dir(W.c_value);
-	console.dir(W);
-	console.dir(S.c_value);
-	console.dir(S);
+	//console.log('---------------------');
+	//console.log(W.c_depth + ":" + GEN);
+	//console.dir(W.c_value);
+	//console.dir(W);
+	//console.dir(S.c_value);
+	//console.dir(S);
 	
 	var state = 'topbotmatch';
 	var topEqualCount = 0;
@@ -393,7 +371,7 @@ CVC.match = function(W, S, GEN) {
 	// when at least one side has no children present
 	if (W.c_leaf || S.c_leaf) {
 
-		console.log('at least one side has no children');
+		//console.log('at least one side has no children');
 		
 		if (W.nodeName == S.nodeName) {
 		    // if the node is already marked as pcdata, then anything goes
@@ -434,7 +412,7 @@ CVC.match = function(W, S, GEN) {
 	// when at least one side has some children present
 	if (!W.c_leaf || !S.c_leaf) {
 		
-		console.log('at least one side has children');
+		//console.log('at least one side has children');
 
 		// before iterating, check to see if everything below is inline
 		if (W.c_childrenInline && S.c_childrenInline && W.c_value == S.c_value) {
@@ -474,7 +452,7 @@ CVC.match = function(W, S, GEN) {
 		    // step through sample side iterators
 		    for (i=mini,j=minj; (i<=maxi && j<=maxj); j++) {
 		        let m = CVC.match(W.childNodes[i],S.childNodes[j],false);
-                console.log(W.c_depth + " : " + GEN + " : " + m);
+                //console.log(W.c_depth + " : " + GEN + " : " + m);
 		        // equal or pcdata could be applied to make them equivalent
 		        if (m == 'equal' || m == 'diff-string') {
 		            // do nothing
@@ -488,7 +466,7 @@ CVC.match = function(W, S, GEN) {
 		    // now step through wrapper side iterators
 		    for (i=mini,j=mini+1; (i<=maxi && j<=maxi); j++) {
 		        let m = CVC.match(W.childNodes[i],W.childNodes[j],false);
-                console.log(W.c_depth + " : " + GEN + " : " + m);
+                //console.log(W.c_depth + " : " + GEN + " : " + m);
 		        // equal or pcdata could be applied to make them equivalent
 		        if (m == 'equal' || m == 'diff-string') {
 		            // do nothing
@@ -508,7 +486,7 @@ CVC.match = function(W, S, GEN) {
 		            // step through sample side iterators
 		            for (i=mini,j=minj; (i<=maxi && j<=maxj); j++) {
 		                let m = CVC.match(W.childNodes[i],S.childNodes[j],true);
-		                console.log(W.c_depth + " : " + GEN + " : " + m);
+		                //console.log(W.c_depth + " : " + GEN + " : " + m);
 		                S.childNodes[j].c_wid = W.childNodes[i].c_cid;
 		            }
 		            // remove any extra wrapper side iterators
@@ -749,9 +727,9 @@ CVC.displayOutput = function() {
 
 	var result = new $.Deferred();
 	
-	console.log('highlighting sample 0');
+	//console.log('highlighting sample 0');
 	CVC.applyVisuals(CVC.samples[0]);
-	console.log('highlighting sample 1');
+	//console.log('highlighting sample 1');
 	CVC.applyVisuals(CVC.samples[1]);
 
 	result.resolve();
@@ -781,7 +759,7 @@ CVC.applyVisuals = function(sNode) {
 
     	// if non-text, get from data-cnode attribute
     	if (wNode && wNode.c_pcdata !== null) {
-    		console.log('found some pcdata');
+    		//console.log('found some pcdata');
         	//sNode.className += " coyote-variable";
    			sNode.parentNode.classList.add('coyote-variable');
     	}
