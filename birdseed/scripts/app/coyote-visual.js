@@ -59,8 +59,8 @@ CVC.runDifferenceAlgorithm = function(combinedTabData) {
 	var heading = $("#heading");
 	
 	// get the content from the passed data
-	var content1 = CVC.removeScripts(combinedTabData.firstTabData.tabBodyTextContent);
-	var content2 = CVC.removeScripts(combinedTabData.secondTabData.tabBodyTextContent);
+	var content1 = CVC.removeScripts(combinedTabData.firstTabData.tabBodyTextContent.textcontent);
+	var content2 = CVC.removeScripts(combinedTabData.secondTabData.tabBodyTextContent.textcontent);
 	// find the containers
 	var sampleContainer1 = $("#first-tab-output-container");
 	var sampleContainer2 = $("#second-tab-output-container");
@@ -723,7 +723,10 @@ CVC.leafmatch = function(W, S) {
 }
 	
 	
-CVC.displayOutput = function() {
+CVC.displayOutput = function(combinedTabData) {
+	
+	CVC.loadStyle(combinedTabData.firstTabData.tabBodyTextContent.stylesheets);
+	CVC.loadStyle(combinedTabData.secondTabData.tabBodyTextContent.stylesheets);
 
 	var result = new $.Deferred();
 	
@@ -869,4 +872,27 @@ CVC.compress = function(path, element, depth) {
     }
 
     return element;
+}
+
+CVC.loadStyle = function(sheetArray) {
+	
+	let i;
+	var head  = document.getElementsByTagName('head')[0];
+	for (i=0; i<sheetArray.length; i++) {
+		let type = sheetArray[i].type;
+		let href = sheetArray[i].href;
+		let media = sheetArray[i].media;
+		// avoid duplicates
+		for (var j = 0; j < document.styleSheets.length; j++){
+			if (document.styleSheets[j].href == href){
+				return;
+			}
+		}
+		var link  = document.createElement('link');
+		link.rel  = 'stylesheet';
+		link.type = type;
+		link.href = href;
+		link.media = media;
+		head.appendChild(link);
+	}
 }

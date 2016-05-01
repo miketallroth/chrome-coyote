@@ -23,11 +23,35 @@ Coyote.Foreground.handleMessage = function(request, sender, sendResponse) {
 
   if(request.action === "getBodyTextContent") {
 
-    sendResponse(Coyote.Foreground.getBodyTextContent());
+    sendResponse({
+    	textcontent: Coyote.Foreground.getBodyTextContent(),
+    	stylesheets: Coyote.Foreground.getStylesheets()
+    });
+
   }
   else {
     throw "The message request action was not recognized.";
   }
+}
+
+// Gets stylesheets defined in the document
+Coyote.Foreground.getStylesheets = function() {
+	let i;
+	let ss = document.styleSheets;
+	let sheetArray = [];
+	for (i=0; i<ss.length; i++) {
+		let type = ss[i].type;
+		let href = ss[i].href;
+		let media = ss[i].media.mediaText;
+		if (href !== null) {
+			sheetArray.push({
+				type: type,
+				href: href,
+				media: media
+			});
+		}
+	}
+	return sheetArray;
 }
 
 // Gets text content from the document body.

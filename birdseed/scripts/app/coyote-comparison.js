@@ -22,7 +22,7 @@ Coyote.Comparison.initialize = function() {
         Coyote.VisualComparison.runDifferenceAlgorithm(combinedStoredTabData).done(function() {
 
           // Display the output tables.
-          Coyote.VisualComparison.displayOutput().done(function() {
+          Coyote.VisualComparison.displayOutput(combinedStoredTabData).done(function() {
 
             // Processing is complete!
             let endTime = Date.now();
