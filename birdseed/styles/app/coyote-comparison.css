@@ -1,0 +1,181 @@
+/* Style rules for the Coyote comparison page. */
+
+@import "coyote-common.css";
+
+html {
+  background-color: #FFFFFD;
+}
+
+#heading {
+  text-align: center;
+}
+
+#heading h1 {
+  display: inline-block;
+  font-size: xx-large;
+}
+
+#heading img {
+  vertical-align: middle;
+}
+
+#heading span {
+  vertical-align: middle;
+  margin-right: 128px;
+}
+
+#parent-tab-output-container {
+  text-align: center;
+  margin-top: 32px;
+}
+
+#reload-button-container {
+  border-bottom: 32px;
+}
+
+#reload-button {
+  height: 32px;
+}
+
+#flexible-tab-output-container {
+  display: inline-flex;
+}
+
+#tab-output-container-spacer {
+  width: 2%;
+}
+
+.tab-output-container {
+  width: 49%;
+  margin-bottom: 32px;
+}
+
+.tab-output-heading {
+  max-width: 80%;
+  margin: auto;
+}
+
+.tab-output-heading-container {
+  font-size: larger;
+  min-height:  60px;
+  max-height:  60px;
+  max-width: 80%;
+  margin: auto;
+}
+
+.tab-output-icon-image {
+  max-height: 32px;
+  max-width: 32px;
+  vertical-align: middle;
+  margin-right: 16px;
+}
+
+.tab-output-title {
+  font-weight: bold;
+}
+
+.tab-output-heading-text {
+  vertical-align: middle;
+  margin-right: 48px;
+}
+
+.output-table {
+  background-color: #E6F3FF;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+  border-collapse: collapse;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.output-table-column {
+  border: 1px solid #000000;
+  min-width: 64px;
+  max-width: 256px;
+}
+
+.values-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.values-table-header-cell {
+  height: 0px;
+  position: relative;
+}
+
+.values-table-info-icon {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  z-index: 1;
+}
+
+.values-cell {
+  font-size: 1.1em;
+  vertical-align: top;
+  text-align: left;
+  padding: 4px;
+}
+
+.highlighted-values-cell {
+  background-color: #B3FFB3;
+}
+
+.highlighted-output-table-column, .highlighted-output-table-row {
+  background-color: #FFD9B3;
+}
+
+/*
+.comp-column {
+  float: left;
+  width: 0%;
+}
+*/
+
+/*
+.comp-column-3 {
+  float: left;
+  width: 33%;
+}
+*/
+
+.coyote-wrapper {
+  /*opacity: 0.6;*/
+  color: #999;
+}
+
+.coyote-variable {
+  background-color: #ff0;
+}
+
+#container4, #container5 {
+  display: none;
+}
+
+#container1, #container2,
+#container3 {
+  display: inline;
+  float: left;
+  width: 50%;
+  zoom: 50%;
+}
+
+@media screen and (max-width: 1366px) {
+  #flexible-tab-output-container {
+    display: block;
+  }
+
+  #tab-output-container-spacer {
+    display: none;
+  }
+
+  .tab-output-container {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+  }
+
+  .output-table-column {
+    min-width: 24px;
+  }
+}

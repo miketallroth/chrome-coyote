@@ -1,0 +1,38 @@
+{
+    "name": "Coyote",
+    "version": "0.0.1",
+    "description": "Extracts data and performs comparison between the fields of two web pages from the same data domain.",
+    "author": "Team \"Use The Schwartz\"",
+    "icons": {
+        "16": "images/coyote-icon-16px.png",
+        "32": "images/coyote-icon-32px.png",
+        "48": "images/coyote-icon-48px.png",
+        "128": "images/coyote-icon-128px.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "19": "images/coyote-icon-19px.png",
+            "38": "images/coyote-icon-38px.png"
+        },
+        "default_title": "Coyote data extraction and field comparison tool.",
+        "default_popup": "pages/coyote-toolbar.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "scripts/lib/jquery-2.2.1.min.js",
+                "scripts/app/coyote-common.js",
+                "scripts/app/coyote-foreground.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "tabs",
+        "storage",
+        "<all_urls>"
+    ],
+    "manifest_version": 2
+}
