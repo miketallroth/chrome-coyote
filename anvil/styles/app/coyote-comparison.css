@@ -1,0 +1,222 @@
+/* Style rules for the Coyote comparison page. */
+
+@import "coyote-common.css";
+
+html {
+  height: 100%;
+}
+
+body {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+#heading-container {
+  text-align: center;
+}
+
+#heading-text {
+  display: inline-block;
+  font-size: xx-large;
+  margin-right: 128px;
+}
+
+#heading-text img, #heading-text span {
+  vertical-align: middle;
+}
+
+#reload-button-container {
+  display: inline-block;
+  margin-top: -60px;
+  margin-bottom: 32px;
+}
+
+#reload-button {
+  height: 32px;
+}
+
+#parent-tab-output-container {
+  text-align: center;
+}
+
+#flexible-tab-output-container {
+  display: inline-flex;
+  height: 100%;
+}
+
+#tab-output-container-spacer {
+  width: 2%;
+}
+
+#tech-stats-container {
+  text-align: center;
+}
+
+#toggle-distinct-prefixes-button {
+  display: block;
+  margin: 32px auto 16px;
+  height: 32px;
+}
+
+#distinct-prefixes-list-container {
+  display: inline-block;
+  text-align: left;
+  border: 1px dashed #000000;
+  padding: 0px 32px;
+  margin: auto;
+}
+
+.tab-output-container {
+  height: 100%;
+  width: 49%;
+}
+
+.tab-output-heading-container {
+  margin-top: 32px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 90px;
+  max-height: 90px;
+}
+
+.tab-output-heading {
+  max-width: 80%;
+  margin: auto;
+  white-space: nowrap;
+}
+
+.tab-output-subheading {
+  font-size: larger;
+  max-width: 80%;
+  margin: auto;
+}
+
+.tab-output-icon-image {
+  max-height: 32px;
+  max-width: 32px;
+  vertical-align: middle;
+  margin-right: 16px;
+}
+
+.tab-output-title {
+  font-weight: bold;
+}
+
+.tab-output-heading-text {
+  vertical-align: middle;
+  margin-right: 48px;
+}
+
+.output-table-container {
+  height: 100%;
+  overflow-y: scroll;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+}
+
+.output-table {
+  background-color: #E6F3FF;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.output-table-column {
+  border: 1px solid #000000;
+  min-width: 64px;
+  max-width: 256px;
+}
+
+.values-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.values-table-header-cell {
+  height: 0px;
+  position: relative;
+}
+
+.values-table-info-icon {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  z-index: 1;
+}
+
+.values-cell {
+  font-size: 1.1em;
+  vertical-align: top;
+  text-align: left;
+  padding: 4px;
+}
+
+.highlighted-values-cell {
+  background-color: #B3FFB3;
+}
+
+.highlighted-output-table-column, .highlighted-output-table-row {
+  background-color: #FFD9B3;
+}
+
+.calculation-time-header {
+  margin-top: 32px;
+  margin-right: 16px;
+}
+
+.calculation-time-icon {
+  vertical-align: middle;
+}
+
+.calculation-time-text {
+  vertical-align: middle;
+  margin-left: 16px;
+}
+
+@media screen and (max-width: 1366px) {
+
+  #parent-tab-output-container {
+    height: auto;
+  }
+
+  #flexible-tab-output-container {
+    display: block;
+    height: auto;
+  }
+
+  #tab-output-container-spacer {
+    display: none;
+  }
+
+  .tab-output-container {
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    width: 94%;
+  }
+
+  .output-table-container {
+    max-height: 600px;
+  }
+
+  .output-table-column {
+    min-width: 24px;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  #heading-text {
+    display: block;
+    margin-right: 0px;
+  }
+
+  #heading-text img {
+    display: none;
+  }
+
+  #reload-button-container {
+    margin-top: 0px;
+  }
+}

@@ -1,0 +1,80 @@
+/* Style rules for the Coyote toolbar dialog. */
+
+@import "coyote-common.css";
+
+#tabs-title {
+  font-size: small;
+}
+
+#compare-button {
+  height: 32px;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.tab-selection-list {
+  margin-left: 8px;
+  padding-left: 0px;
+  float: left;
+}
+
+.tab-selection-list-item {
+  cursor: pointer;
+  list-style-type: none;
+  border: 1px dashed #A6A6A6;
+  border-radius: 2px;
+  padding: 8px;
+  margin-bottom: 8px;
+  height: 48px;
+  width: 162px;
+}
+
+.tab-selection-list-item:last-child {
+  margin-bottom: 0px;
+}
+
+.tab-selection-list-item:hover {
+  background-color: #E6F3FF;
+}
+
+.tab-selection-icon {
+  margin-right: 8px;
+  height: 18px;
+  width: 18px;
+  float: left;
+}
+
+.tab-selection-item-content-container {
+  position: relative;
+  height: 48px;
+  overflow: hidden;
+}
+
+.tab-selection-item-content {
+  margin-left: 26px;
+  overflow: hidden;
+}
+
+.tab-title {
+  font-weight: bold;
+}
+
+.active-tab-selection, .active-tab-selection:hover {
+  background-color: #80CCFF;
+}
+
+.display-index-badge {
+  color: #0000CC;
+  font-weight: bold;
+  background-color: #FFFFFF;
+  border-radius: 2px;
+  text-align: center;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 1;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<!-- This page is used to display the Coyote content comparison. -->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<title>Coyote Comparison Results</title>
+
+		<link rel="stylesheet" type="text/css" href="../styles/lib/tooltipster-3.3.0.min.css">
+		<link rel="stylesheet" type="text/css" href="../styles/app/coyote-comparison.css">
+
+		<script type="text/javascript" src="../scripts/lib/jquery-2.2.1.min.js"></script>
+		<script type="text/javascript" src="../scripts/lib/difflib.min.js"></script>
+		<script type="text/javascript" src="../scripts/lib/tooltipster-3.3.0.min.js"></script>
+		<script type="text/javascript" src="../scripts/app/coyote-common.js"></script>
+		<script type="text/javascript" src="../scripts/app/coyote-comparison.js"></script>
+	</head>
+
+	<body>
+		<div id="heading-container">
+			<h1 id="heading-text">
+				<img src="../images/coyote-icon-128px.png" alt="Coyote Icon">
+				<span>Coyote Comparison Results</span>
+			</h1>
+			<div id="reload-button-container"></div>
+			<hr>
+		</div>
+
+		<div id="parent-tab-output-container">
+			<div id="flexible-tab-output-container">
+				<div id="first-tab-output-container" class="tab-output-container"></div>
+				<div id="tab-output-container-spacer"></div>
+				<div id="second-tab-output-container" class="tab-output-container"></div>
+			</div>
+		</div>
+
+		<div id="tech-stats-container"></div>
+	</body>
+</html>

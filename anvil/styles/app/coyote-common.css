@@ -1,0 +1,15 @@
+/* Common Coyote style rules. */
+
+html {
+  background-color: #FFFFFD;
+}
+
+.error-message-container {
+  text-align: justify;
+  margin: auto;
+  width: 240px;
+}
+
+.error-message-header {
+  font-size: medium;
+}
