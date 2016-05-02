@@ -14,7 +14,7 @@
             "19": "images/coyote-icon-19px.png",
             "38": "images/coyote-icon-38px.png"
         },
-        "default_title": "Coyote data extraction and field comparison tool.",
+        "default_title": "Coyote visual data extraction and field comparison tool.",
         "default_popup": "pages/coyote-toolbar.html"
     },
     "content_scripts": [
