@@ -762,9 +762,19 @@ CVC.applyVisuals = function(sNode) {
 
     	// if non-text, get from data-cnode attribute
     	if (wNode && wNode.c_pcdata !== null) {
-    		//console.log('found some pcdata');
-        	//sNode.className += " coyote-variable";
+    		// set basic field highlighting
    			sNode.parentNode.classList.add('coyote-variable');
+   			// set id'ed field class
+   			sNode.parentNode.classList.add('coyote-variable-' + wNode.c_pcdata);
+   			// enable dynamic highlighting of hovered fields
+   			sNode.parentNode.onmouseenter = function() {
+   				let matchingValuesCellClassName = Coyote.Common.getClassNamesWithPrefix(this, "coyote-variable-")[0];
+   				$("." + matchingValuesCellClassName).addClass("coyote-single-highlight");
+   			}
+   			sNode.parentNode.onmouseleave = function() {
+   				let matchingValuesCellClassName = Coyote.Common.getClassNamesWithPrefix(this, "coyote-variable-")[0];
+   				$("." + matchingValuesCellClassName).removeClass("coyote-single-highlight");
+   			}
     	}
 
     }

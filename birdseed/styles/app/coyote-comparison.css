@@ -145,6 +145,10 @@ html {
 }
 
 .coyote-variable {
+  background-color: #afa;
+}
+
+.coyote-single-highlight {
   background-color: #ff0;
 }
 
