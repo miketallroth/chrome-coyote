@@ -164,6 +164,10 @@ html {
   zoom: 50%;
 }
 
+#wrapper-container {
+  display: none;
+}
+
 @media screen and (max-width: 1366px) {
   #flexible-tab-output-container {
     display: block;
