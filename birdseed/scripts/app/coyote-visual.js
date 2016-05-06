@@ -61,6 +61,7 @@ CVC.runDifferenceAlgorithm = function(combinedTabData) {
 	// get the content from the passed data
 	var content1 = CVC.removeScripts(combinedTabData.firstTabData.tabBodyTextContent.textcontent);
 	var content2 = CVC.removeScripts(combinedTabData.secondTabData.tabBodyTextContent.textcontent);
+	
 	// find the containers
 	var sampleContainer1 = $("#first-tab-output-container");
 	var sampleContainer2 = $("#second-tab-output-container");
@@ -308,420 +309,6 @@ CVC.showTree = function(node) {
     }
 }
 
-
-
-
-
-
-/**
- * Section 5. of Roadrunner paper says:
- * "... we disallow adjacencies between iterators and optionals."
- * and,
- * (A)+ = A is repeated one or more times
- * (A)? = A is optional, occurs either 0 or 1 times
- * (A)* = ((A)+)?
- * 
- * Therefore, possible options are
- *  ---
- *  A
- *  ---
- * 	(A)+ -or- (A)? -or- (A)*
- *  ---
- * 	A
- * 	(B)+ -or- (B)? -or- (B)*
- * 	---
- * 	(A)+ -or- (A)? -or- (A)*
- * 	B
- * 	---
- * 	A
- * 	(B)+ -or- (B)? -or- (B)*
- *  C
- * 	---
- */
-
-/**
- * Match
- * 
- * When children are present on at least one side
- * states: (states progress from first to last in this list, searching for each type of match)
- *  topmatch, botmatch, iterator, optional, done
- *  
- */
-/**
- * @param W
- * @param S
- * @param GEN - bool - directive to generalize the wrapper or not
- */
-CVC.match = function(W, S, GEN) {
-	
-	//console.log('---------------------');
-	//console.log(W.c_depth + ":" + GEN);
-	//console.dir(W.c_value);
-	//console.dir(W);
-	//console.dir(S.c_value);
-	//console.dir(S);
-	
-	var state = 'topbotmatch';
-	var topEqualCount = 0;
-	var botEqualCount = 0;
-	var goodIterator = false;
-	var goodOptional = false;
-	var result = 'equal';
-	
-	// when at least one side has no children present
-	if (W.c_leaf || S.c_leaf) {
-
-		//console.log('at least one side has no children');
-		
-		if (W.nodeName == S.nodeName) {
-		    // if the node is already marked as pcdata, then anything goes
-		    if (W.c_pcdata !== null) {
-		        if (GEN) {
-		            S.c_wid = W.c_cid;
-		        }
-		        return 'equal';
-		    }
-		    if ((W.c_leaf || W.c_childrenInline) && (S.c_leaf || S.c_childrenInline) &&
-		        W.c_value == S.c_value) {
-		        if (GEN) {
-		            S.c_wid = W.c_cid;
-		        }
-		        return 'equal';
-		    }
-		    if ((W.c_leaf || W.c_childrenInline) && (S.c_leaf || S.c_childrenInline)) {
-		        if (GEN) {
-		            W.c_pcdata = CVC.nextPCDataNum++;
-		            S.c_wid = W.c_cid;
-		        }
-		        return 'diff-string';
-		    }
-
-		    // if we made it here, we could be dealing with an optional
-		    // TODO - is this right???
-		    nextstate = 'optional';
-
-
-		} else {
-			return 'diff-tag';
-		}
-		
-		state = nextstate;
-	}
-	
-	
-	// when at least one side has some children present
-	if (!W.c_leaf || !S.c_leaf) {
-		
-		//console.log('at least one side has children');
-
-		// before iterating, check to see if everything below is inline
-		if (W.c_childrenInline && S.c_childrenInline && W.c_value == S.c_value) {
-		    if (GEN) {
-		        S.c_wid = W.c_cid;
-		    }
-		    return 'equal';
-		}
-
-
-		if (state == 'topbotmatch') {
-			CVC.topbotmatch(W,S,'topmatch');
-			state = 'datamatch';
-		}
-
-		if (state == 'datamatch') {
-			CVC.datamatch(W,S);
-			state = 'iterator';
-		}
-
-		
-		if (false && state == 'iterator') {
-
-		    // If we arrived here, it means both sides have unmatched children
-		    // indicating its an iterator, not an optional. Therefore, if we
-		    // have trouble generalizing here, its an error.
-			let i;
-			let j;
-		    let nextstate = 'done';
-		    let mini = topEqualCount;
-		    let minj = topEqualCount;
-		    let maxi = W.childNodes.length-1-botEqualCount;
-		    let maxj = S.childNodes.length-1-botEqualCount;
-
-		    // run through all remaining children confirming valid iterator
-		    goodIterator = true;
-		    // step through sample side iterators
-		    for (i=mini,j=minj; (i<=maxi && j<=maxj); j++) {
-		        let m = CVC.match(W.childNodes[i],S.childNodes[j],false);
-                //console.log(W.c_depth + " : " + GEN + " : " + m);
-		        // equal or pcdata could be applied to make them equivalent
-		        if (m == 'equal' || m == 'diff-string') {
-		            // do nothing
-		        } else {
-		            // if not equal or resolvable, error. see note above.
-		            nextstate = 'done';
-		            goodIterator = false;
-		            break;
-		        }
-		    }
-		    // now step through wrapper side iterators
-		    for (i=mini,j=mini+1; (i<=maxi && j<=maxi); j++) {
-		        let m = CVC.match(W.childNodes[i],W.childNodes[j],false);
-                //console.log(W.c_depth + " : " + GEN + " : " + m);
-		        // equal or pcdata could be applied to make them equivalent
-		        if (m == 'equal' || m == 'diff-string') {
-		            // do nothing
-		        } else {
-		            // if not equal or resolvable, error. see note above.
-		            nextstate = 'done';
-		            goodIterator = false;
-		            break;
-		        }
-		    }
-		    
-		    // if all children can be absorbed into the iterator, then do it
-		    if (goodIterator) {
-		        if (GEN) {
-		            // mark wrapper side as iterator pivot point
-		            W.childNodes[i].c_iterator = true;
-		            // step through sample side iterators
-		            for (i=mini,j=minj; (i<=maxi && j<=maxj); j++) {
-		                let m = CVC.match(W.childNodes[i],S.childNodes[j],true);
-		                //console.log(W.c_depth + " : " + GEN + " : " + m);
-		                S.childNodes[j].c_wid = W.childNodes[i].c_cid;
-		            }
-		            // remove any extra wrapper side iterators
-		            for (i=mini,j=mini+1; (i<=maxi && j<=maxi); j++) {
-		                W.removeChild(W.childNodes[j]);
-		            }
-		        }
-		    } else {
-		        // TODO (??? is this the right result value?)
-		        result = 'diff-tag';
-		    }
-
-		    state = nextstate;
-
-		}
-
-	}
-	
-	if (state == 'done') {
-		return result;
-	}
-	
-	return 'error';
-}
-
-
-CVC.datamatch = function(W, S) {
-	/*
-	console.log('---datamatch------------------');
-	console.log(W.c_depth);
-	console.dir(W.c_value);
-	console.dir(W);
-	console.dir(S.c_value);
-	console.dir(S);
-	*/
-	
-	let m = CVC.leafmatch(W, S);
-	if (m == 'equal') {
-		return 'equal';
-	}
-
-	let topEqualCount = W.c_topEqualCount || 0;
-	let botEqualCount = W.c_botEqualCount || 0;
-
-    // If we arrived here, it means both sides have unmatched children
-    // indicating its an iterator, not an optional. Therefore, if we
-    // have trouble generalizing here, its an error.
-	let i;
-	let j;
-    let nextstate = 'done';
-    let mini = topEqualCount;
-    let minj = topEqualCount;
-    let maxi = W.childNodes.length-1-botEqualCount;
-    let maxj = S.childNodes.length-1-botEqualCount;
-    for (i=mini,j=minj; (i<=maxi && j<=maxj); i++,j++) {
-        m = CVC.datamatch(W.childNodes[i],S.childNodes[j]);
-    }
-		    
-    return m;
-}
-
-
-
-
-
-CVC.topbotmatch = function(W, S, state) {
-
-	let m = CVC.leafmatch(W, S);
-	if (m == 'equal' || m == 'diff-tag') {
-		return m;
-	}
-
-	let i;
-	let j;
-	let topEqualCount = W.c_topEqualCount || 0;
-	let botEqualCount = W.c_botEqualCount || 0;
-    let nextstate = 'datamatch';
-    let mini = 0;
-    let minj = 0;
-    let maxi = W.childNodes.length-1;
-    let maxj = S.childNodes.length-1;
-    
-    if (state == 'topmatch') {
-    
-    for (i=mini,j=minj; (i<=maxi && j<=maxj); i++,j++) {
-        m = CVC.topbotmatch(W.childNodes[i],S.childNodes[j], 'topmatch');
-        //console.log(W.c_depth + " : " + m);
-        
-        // if same tag (in same place) then link them
-        if (m !== 'diff-tag') {
-            S.childNodes[j].c_wid = W.childNodes[i].c_cid;
-        }
-        
-        if (m == 'equal') {
-            //S.childNodes[j].c_wid = W.childNodes[i].c_cid;
-            topEqualCount = i+1;
-            // if both sides finished at same time
-            if (i==maxi && j==maxj) {
-                // no more children to process
-                // nothing more to do
-                nextstate = 'done';
-                break;
-            }
-            // if only one side finished
-            if (i==maxi || j==maxj) {
-                // then only one side has remaining children
-                // only possibility is an optional
-                nextstate = 'optional';
-                break;
-            }
-        } else {
-            // both sides have remaining children
-            // do next step
-            nextstate = 'botmatch';
-            break;
-        }
-    }
-    W.c_topEqualCount = topEqualCount;
-    state = nextstate;
-
-    }
-    
-    
-    if (state != 'botmatch') {
-    	return m;
-    }
-    
-
-    nextstate = 'iterator';
-    mini = topEqualCount;
-    minj = topEqualCount;
-    maxi = W.childNodes.length-1;
-    maxj = S.childNodes.length-1;
-    for (i=maxi,j=maxj; (i>=mini && j>=minj); i--,j--) {
-        m = CVC.topbotmatch(W.childNodes[i],S.childNodes[j],'botmatch');
-        //console.log(W.c_depth + " : " + m);
-        
-        if (m !== 'diff-tag') {
-            S.childNodes[j].c_wid = W.childNodes[i].c_cid;
-        }
-
-        if (m == 'equal') {
-            //m = CVC.match(W.childNodes[i],S.childNodes[j],true);
-            //console.log(W.c_depth + " : " + m);
-            // TODO
-            // if this next step is already done in the previous, then both (prev and next)
-            // should be collapsed into the call to match above using "GEN" as the third param
-            botEqualCount = maxi-i+1;
-            // if both sides finished at same time
-            // (shouldn't really happen because if this condition existed
-            // it should have been caught in the top matches)
-            if (i==mini && j==minj) {
-                // no more children to process
-                // nothing more to do
-                nextstate = 'done';
-                break;
-            }
-            // if only one side finished
-            if (i==mini || j==minj) {
-                // then only one side has remaining children
-                // only possibility is an optional
-                nextstate = 'optional';
-                break;
-            }
-        } else {
-            // both sides have remaining children
-            // do next step
-            nextstate = 'iterator';
-            break;
-        }
-    }
-    W.c_botEqualCount = botEqualCount;
-    state = nextstate;
-    
-    return m;
-}
-
-
-
-CVC.exactmatch = function(W, S) {
-	if (W.nodeName == S.nodeName && W.c_value == S.c_value) {
-		return true;
-	}
-	return false;
-}
-
-
-	
-CVC.leafmatch = function(W, S) {
-	
-	/*
-	if (CVC.exactmatch(W,S)) {
-		return 'equal';
-	}
-	*/
-
-	// when at least one side has no children present
-	if (W.c_leaf || S.c_leaf) {
-
-		//console.log('at least one side has no children');
-		
-		if (W.nodeName == S.nodeName) {
-		    // if the node is already marked as pcdata, then anything goes
-		    if (W.c_pcdata !== null) {
-		        S.c_wid = W.c_cid;
-		        //return 'equal';
-		        return 'diff-string';
-		    }
-		    if ((W.c_leaf || W.c_childrenInline) && (S.c_leaf || S.c_childrenInline) &&
-		        W.c_value == S.c_value) {
-		        S.c_wid = W.c_cid;
-		        return 'equal';
-		    }
-		    if ((W.c_leaf || W.c_childrenInline) && (S.c_leaf || S.c_childrenInline)) {
-	            W.c_pcdata = CVC.nextPCDataNum++;
-	            S.c_wid = W.c_cid;
-		        return 'diff-string';
-		    }
-
-		    // if we made it here, we could be dealing with an optional
-		    // TODO - is this right???
-		    nextstate = 'optional';
-
-
-		} else {
-			return 'diff-tag';
-		}
-		
-		state = nextstate;
-	}
-	
-	return null;
-	
-}
-	
 	
 CVC.displayOutput = function(combinedTabData) {
 	
@@ -906,3 +493,256 @@ CVC.loadStyle = function(sheetArray) {
 		head.appendChild(link);
 	}
 }
+
+CVC.match = function(W, S) {
+	
+	//console.log('---' + W.c_depth + '---------------');
+	//console.dir(W);
+	//console.dir(S);
+	
+	// if tags are different, then fail fast
+	if (W.nodeName !== S.nodeName) {
+		return {tag: 'diff', text: 'diff'};
+	}
+	
+	// if all children are inline (basically different forms of text)
+	if (W.c_inlineChildren && S.c_inlineChildren) {
+		if (W.c_value == S.c_value) {
+			return {tag: 'same', text: 'same'};
+		} else {
+			return {tag: 'same', text: 'diff'};
+		}
+	}
+	
+	let i=0,j=0,ii=0;
+	let state='normal';
+	let bubbleValue = {tag: 'same', text: 'same'};
+	
+	// iterate through the children
+	let count=0;
+	while (i<W.childNodes.length && ii<W.childNodes.length && j<S.childNodes.length && bubbleValue.tag != 'diff' && state != 'done') {
+		// prevent infinite loops when bad incrementers are used
+		count++; if (count>50) {console.log(state); exit;}
+
+		// TODO need some case for when searching for wIterator or optionals
+		// because we need to send across two W's instead of one W and one S
+		let childrv;
+		if (state == 'wIteratorSearch') {
+			childrv = CVC.match(W.childNodes[i], W.childNodes[ii]);
+		} else {
+			childrv = CVC.match(W.childNodes[i], S.childNodes[j]);
+		}
+
+		switch (state) {
+			case 'normal':
+				if (CVC.equalRV(childrv, CVC.SS) || CVC.equalRV(childrv, CVC.SP)) {
+					CVC.linkNodes(W.childNodes[i], S.childNodes[j]);
+					W.c_topEqualCount++;
+					i++,j++;
+					if (i>=W.childNodes.length) {
+						if (j>=S.childNodes.length) {
+							state = 'done';
+							bubbleValue = CVC.updateRV(bubbleValue, childrv);
+							continue;
+						} else {
+							state = 'sOptionalSearch';
+							bubbleValue = CVC.updateRV(bubbleValue, childrv);
+							continue;
+						}
+					} else {
+						if (j>=S.childNodes.length) {
+							state = 'wOptionalSearch';
+							bubbleValue = CVC.updateRV(bubbleValue, childrv);
+							continue;
+						}
+					}
+					state = 'normal';
+					bubbleValue = CVC.updateRV(bubbleValue, childrv);
+				} else if (CVC.equalRV(childrv, CVC.SD)) {
+					CVC.linkNodes(W.childNodes[i], S.childNodes[j]);
+					W.childNodes[i].c_pcdata = CVC.nextPCDataNum++;
+					state = 'sIteratorSearch';
+					bubbleValue = CVC.updateRV(bubbleValue, CVC.SP);
+					j++; // walk thru sample side, keep wrapper pointer fixed
+				} else if (CVC.equalRV(childrv, CVC.DD)) {
+					return childrv;
+				} else {
+					CVC.matchError(W.childNodes[i], W.childNodes[ii], state, childrv);
+				}
+				break;
+			case 'sIteratorSearch':
+				if (CVC.equalRV(childrv, CVC.SD) || CVC.equalRV(childrv, CVC.SS) || CVC.equalRV(childrv, CVC.SP)) {
+					CVC.linkNodes(W.childNodes[i], S.childNodes[j]);
+					W.childNodes[i].c_iterator = true;
+					state = 'sIteratorSearch';
+					bubbleValue = CVC.updateRV(bubbleValue, CVC.SP);
+					j++; // walk thru sample side
+					if (j>=S.childNodes.length) {
+						state = 'wIteratorSearch';
+						ii = i+1; // setup ii iterator to walk thru wrapper side
+						if (ii>=W.childNodes.length) {
+							state = 'done';
+						}
+					}
+				} else if (CVC.equalRV(childrv, CVC.DD)) {
+					state = 'wIteratorSearch';
+					ii = i+1; // setup ii iterator to walk thru wrapper side
+					if (ii>=W.childNodes.length) {
+						state = 'done';
+					}
+				} else {
+					CVC.matchError(W.childNodes[i], W.childNodes[ii], state, childrv);
+				}
+				break;
+			case 'wIteratorSearch':
+				if (CVC.equalRV(childrv, CVC.SD)) {
+					// eliminate any adjacent iterator nodes from wrapper
+					W.removeChild(W.childNodes[ii]);
+					state = 'wIteratorSearch';
+					bubbleValue = CVC.updateRV(bubbleValue, childrv);
+					ii++; // walking thru wrapper side
+					if (ii>=W.childNodes.length) {
+						state = 'sOptionalSearch';
+					}
+				} else if (CVC.equalRV(childrv, CVC.DD)) {
+					i = ii;
+					state = 'normal';
+					if (i>=W.childNodes.length) {
+						state = 'sOptionalSearch';
+					}
+				} else {
+					CVC.matchError(W.childNodes[i], W.childNodes[ii], state, childrv);
+				}
+				break;
+			default:
+				CVC.matchError(W.childNodes[i], S.childNodes[j], state);
+		}
+		//console.log('state(' + state + ') childrv(' + JSON.stringify(childrv) + ')');
+		
+		//let a1,a2,a3,a4,a5;
+		//console.log(a1 = i<W.childNodes.length);
+		//console.log(a2 = ii<W.childNodes.length);
+		//console.log(a3 = j<S.childNodes.length);
+		//console.log(a4 = bubbleValue.tag != 'diff');
+		//console.log(a5 = state != 'done');
+		//if ((a1 && a2 && a3 && a4 && a5) === false) {
+			//exit;
+		//}
+	}
+	return bubbleValue;
+}
+
+
+
+CVC.SS = {tag: 'same', text: 'same'};
+CVC.SD = {tag: 'same', text: 'diff'};
+CVC.SP = {tag: 'same', text: 'pcdata'};
+CVC.DD = {tag: 'diff', text: 'diff'};
+
+
+/**
+ * Link up sample node to wrapper node.
+ * If either side has inlineChildren, then link them all, recursively.
+ * Does NOT link arbitrary nodes recursively, only those with
+ * inlineChildren.
+ */
+CVC.linkNodes = function(W, S, recurseW) {
+	
+	// if false, skip recursing through W
+	if (recurseW == null) {
+		recurse = true;
+	}
+
+	// link up main nodes
+	S.c_wid = W.c_cid;
+	
+	// link up inline children (both S and W) to wrapper main node
+	let i;
+	if (W.c_inlineChildren) {
+		if (recurseW) {
+			for (i=0; i<W.childNodes.length; i++) {
+				CVC.linkNodes(W, W.childNodes[i], false);
+			}
+		}
+	}
+	if (S.c_inlineChildren) {
+		for (i=0; i<S.childNodes.length; i++) {
+			CVC.linkNodes(W, S.childNodes[i]);
+		}
+	}
+}
+
+
+/**
+ * Display an error message with the objects.
+ */
+CVC.matchError = function(W, S, state, childrv) {
+					
+	// build up error message
+	let statestr = 'state(' + state + ')';
+	let rvstr = '';
+	if (childrv !== null) {
+		rvstr = ' childrv(' + JSON.stringify(childrv) + ')';
+	}
+	let message = statestr + rvstr + ' not matched';
+					
+	console.log('----------------------------');
+	console.log(message);
+	console.log(W.c_depth + ' : ' + W.c_value);
+	console.dir(W);
+	console.log(S.c_depth + ' : ' + S.c_value);
+	console.dir(S);
+	console.log(); // set breakpoint here
+	exit;
+}
+
+
+/**
+ * Compare two return value objects, each like;
+ * {tag: tagValue, text: textValue}
+ */
+CVC.equalRV = function(rv1, rv2) {
+	if (rv1.tag && rv2.tag && rv1.tag === rv2.tag &&
+		rv1.text && rv2.text && rv1.text === rv2.text) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Perform the logic to keep the value to be returned from the
+ * match routine updated based on the child node comparisons.
+ */
+CVC.updateRV = function(inValue, rv) {
+	
+	var out = {
+			tag: inValue.tag,
+			text: inValue.text
+	};
+	
+	// if tag diff, then downgrade everything
+	if (rv.tag == 'diff') {
+		out.tag = 'diff';
+		out.text = 'diff';
+		return out;
+	}
+	
+	// if currently text is same, it can be downgraded by anything
+	if (inValue.text == 'same') {
+		out.text = rv.text;
+	}
+	
+	// if currently text is pcdata, it can only by downgraded by diff
+	else if (inValue.text == 'pcdata') {
+		if (rv.text == 'diff') {
+			out.text = rv.text;
+		}
+	}
+	
+	// if currently text is diff, then it won't be changed
+	
+	//console.log(JSON.stringify(inValue) + '+' + JSON.stringify(rv) + '==>' + JSON.stringify(inValue));
+	return out;
+}
+
+
