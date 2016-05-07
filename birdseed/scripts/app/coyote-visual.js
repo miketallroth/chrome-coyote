@@ -335,6 +335,13 @@ CVC.applyVisuals = function(sNode) {
     // non-text node
     if (sNode.childNodes.length > 0) {
 
+    	let wNode = CVC.wrapperNodeStore[sNode.c_wid];
+
+    	if (wNode && wNode.c_iterator !== null) {
+    		console.log('highlighting an iterator');
+    		sNode.classList.add('coyote-iterator');
+    	}
+
         // process the children
         var current = sNode.firstChild;
         while (current != null) {
