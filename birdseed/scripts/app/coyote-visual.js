@@ -47,6 +47,7 @@ CVC.inlineTypes = [
 
 
 
+
 // can be used as next field num or as current field count
 //CVC.nextFieldNum = 0;
 CVC.nextPCDataNum = 0;
@@ -132,7 +133,7 @@ CVC.runDifferenceAlgorithm = function(combinedTabData) {
 	//console.log('generalizing sample 0');
 	var generalizeResult = CVC.match(
 			CVC.wrapperNodeStore[CVC.wrapper.c_cid],
-			CVC.sampleNodeStore[CVC.samples[0].c_cid],
+			CVC.samples[0],
 			true);
 
     //CVC.showTree(CVC.wrapper);
@@ -369,8 +370,17 @@ CVC.applyVisuals = function(sNode) {
    				let matchingValuesCellClassName = Coyote.Common.getClassNamesWithPrefix(this, "coyote-variable-")[0];
    				$("." + matchingValuesCellClassName).removeClass("coyote-single-highlight");
    			}
+   			
+   			// debug only
+   			/*
+   			var span = document.createElement("span");
+   			var text = document.createTextNode(wNode.c_pcdata);
+   			span.appendChild(text);
+   			span.classList.add('tooltiptext');
+   			sNode.parentNode.appendChild(span);
+   			*/
     	}
-
+    	
     }
 
 }
@@ -529,7 +539,7 @@ CVC.match = function(W, S) {
 	let count=0;
 	while (i<W.childNodes.length && ii<W.childNodes.length && j<S.childNodes.length && bubbleValue.tag != 'diff' && state != 'done') {
 		// prevent infinite loops when bad incrementers are used
-		count++; if (count>50) {console.log(state); exit;}
+		//count++; if (count>50) {console.log(state); exit;}
 
 		// TODO need some case for when searching for wIterator or optionals
 		// because we need to send across two W's instead of one W and one S
@@ -542,7 +552,14 @@ CVC.match = function(W, S) {
 
 		switch (state) {
 			case 'normal':
-				if (CVC.equalRV(childrv, CVC.SS) || CVC.equalRV(childrv, CVC.SP)) {
+				if (CVC.equalRV(childrv, CVC.SS) && W.c_pcdata !== null) {
+					// special case of same,same but wrapper already marked as data
+					// this will typically be when matching sample[0] (origin of wrapper) with wrapper.
+					CVC.linkNodes(W.childNodes[i], S.childNodes[j]);
+					state = 'sIteratorSearch';
+					bubbleValue = CVC.updateRV(bubbleValue, CVC.SP);
+					j++; // walk thru sample side, keep wrapper pointer fixed
+				} else if (CVC.equalRV(childrv, CVC.SS) || CVC.equalRV(childrv, CVC.SP)) {
 					CVC.linkNodes(W.childNodes[i], S.childNodes[j]);
 					W.c_topEqualCount++;
 					i++,j++;
@@ -586,6 +603,7 @@ CVC.match = function(W, S) {
 					j++; // walk thru sample side
 					if (j>=S.childNodes.length) {
 						state = 'wIteratorSearch';
+						j = 0; // clear j so it passes loop test
 						ii = i+1; // setup ii iterator to walk thru wrapper side
 						if (ii>=W.childNodes.length) {
 							state = 'done';
@@ -632,6 +650,7 @@ CVC.match = function(W, S) {
 		//console.log(a3 = j<S.childNodes.length);
 		//console.log(a4 = bubbleValue.tag != 'diff');
 		//console.log(a5 = state != 'done');
+		//console.log('--------------');
 		//if ((a1 && a2 && a3 && a4 && a5) === false) {
 			//exit;
 		//}
