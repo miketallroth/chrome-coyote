@@ -8,5 +8,5 @@
   * **Downloads**: [https://github.com/miketallroth/chrome-coyote/archive/master.zip](https://github.com/miketallroth/chrome-coyote/archive/master.zip)
   * **Issue tracker**: [https://github.com/miketallroth/chrome-coyote/issues](https://github.com/miketallroth/chrome-coyote/issues)
   * **Wiki**: [https://github.com/miketallroth/chrome-coyote/wiki](https://github.com/miketallroth/chrome-coyote/wiki)
-  * **Installation instructions**: [https://github.com/miketallroth/chrome-coyote/master/coyote-installation-instructions.pdf](https://github.com/miketallroth/chrome-coyote/master/coyote-installation-instructions.pdf)
+  * **Installation instructions**: [https://github.com/miketallroth/chrome-coyote/blob/master/coyote-installation-instructions.pdf](https://github.com/miketallroth/chrome-coyote/blob/master/coyote-installation-instructions.pdf)
   
