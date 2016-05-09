@@ -1,6 +1,6 @@
 # chrome-coyote (webpage comparison tool)
 
-**Coyote** is a javascript extension for the Chrome browser used to compare webpages side by side and highlight the differences. The pages must have been created by the same server side template. It is inspired by the 2001 RoadRunner paper by Crescenzi, Mecca and Merialdo. It is released under the [MIT License](LICENSE.txt).
+**Coyote** is a JavaScript extension for the Chrome browser used to compare webpages side by side and highlight the differences. The pages must have been created by the same server side template. It is inspired by the 2001 RoadRunner paper by Crescenzi, Mecca and Merialdo. It is released under the [MIT License](LICENSE.txt).
 
 ## Links
 
