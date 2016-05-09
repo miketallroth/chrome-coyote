@@ -2,6 +2,23 @@
 
 **Coyote** is a JavaScript extension for the Chrome browser used to compare webpages side by side and highlight the differences. The pages must have been created by the same server side template. It is inspired by the 2001 RoadRunner paper by Crescenzi, Mecca and Merialdo. It is released under the [MIT License](LICENSE.txt).
 
+## Brief Installation and Operating Instructions
+1. Download a Coyote Version
+    * Coyote Anvil - Text-based tabular output
+        * https://github.com/miketallroth/chrome-coyote/tree/master/anvil
+    * Coyote Bird Seed - Uses layout and style from original pages
+        * https://github.com/miketallroth/chrome-coyote/tree/master/birdseed
+2. Install Coyote as a Chrome Extension
+    * Navigate to the Chrome Extensions URL
+        * chrome://extensions
+    * Click the Developer Mode checkbox.
+        * This will allow you to load an extension from the local file system.
+    * Click the "Load unpacked extension..." button and choose the directory where you downloaded the Coyote extension.
+3. Operation
+    * Use the Coyote toolbar to compare web pages.
+
+For more detailed instructions, please refer to the [complete installation instructions](https://github.com/miketallroth/chrome-coyote/blob/master/coyote-installation-instructions.pdf)
+
 ## Links
 
   * **Official website**: [https://github.com/miketallroth/chrome-coyote](https://github.com/miketallroth/chrome-coyote)
